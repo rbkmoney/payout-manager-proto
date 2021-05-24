@@ -8,10 +8,6 @@ namespace erlang payouter
 typedef base.ID PayoutID
 typedef list<Event> Events
 
-typedef base.ID UserID
-
-typedef map<string, msgpack.Value> Metadata
-
 /**
  * Событие, атомарный фрагмент истории бизнес-объекта, например выплаты
  */
@@ -88,7 +84,6 @@ struct Payout {
     13: required domain.CurrencyRef currency
     6 : required domain.FinalCashFlow payout_flow
     7 : required PayoutType type
-    10: optional Metadata metadata
 }
 
 /**
@@ -174,88 +169,10 @@ struct PayoutStatusChanged {
     1: required PayoutStatus status
 }
 
-/**
- * Диапазон для выборки событий
- */
-struct EventRange {
-
-    /**
-     * Идентификатор события, за которым должны следовать попадающие в выборку
-     * события.
-     *
-     * Если `after` не указано, в выборку попадут события с начала истории; если
-     * указано, например, `42`, то в выборку попадут события, случившиеся _после_
-     * события `42`.
-     */
-    1: optional base.EventID after
-
-    /**
-     * Максимальное количество событий в выборке.
-     *
-     * В выборку может попасть количество событий, _не больше_ указанного в
-     * `limit`. Если в выборку попало событий _меньше_, чем значение `limit`,
-     * был достигнут конец текущей истории.
-     *
-     * _Допустимые значения_: неотрицательные числа
-     */
-    2: required i32 limit
-
-}
-
-exception NoLastEvent {}
-exception EventNotFound {}
-exception InvalidPayoutTool {}
 exception PayoutNotFound {}
-
-service EventSink {
-
-    /**
-     * Получить последовательный набор событий из истории системы, от более
-     * ранних к более поздним, из диапазона, заданного `range`. Результат
-     * выполнения запроса может содержать от `0` до `range.limit` событий.
-     *
-     * Если в `range.after` указан идентификатор неизвестного события, то есть
-     * события, не наблюдаемого клиентом ранее в известной ему истории,
-     * бросится исключение `EventNotFound`.
-     */
-    Events GetEvents (1: EventRange range)
-        throws (1: EventNotFound ex1, 2: base.InvalidRequest ex2)
-
-    /**
-     * Получить идентификатор наиболее позднего известного на момент исполнения
-     * запроса события
-     */
-    base.EventID GetLastEventID ()
-        throws (1: NoLastEvent ex1)
-
-}
 
 /* Когда на счете для вывода недостаточно средств */
 exception InsufficientFunds {}
-/* Когда превышен лимит */
-exception LimitExceeded {}
-
-/**
-* Диапазон времени
-* from_time - начальное время.
-* to_time - конечное время.
-* Если from > to  - диапазон считается некорректным.
-*/
-struct TimeRange {
-    1: required base.Timestamp from_time
-    2: required base.Timestamp to_time
-}
-
-/**
-* Диапазон суммы
-* min - минимальная сумма.
-* max - максимальная сумма.
-* Если min > max - диапазон сумм считается некорректным.
-*/
-struct AmountRange {
-    1: optional domain.Amount min
-    2: optional domain.Amount max
-}
 
 struct ShopParams {
     1: required domain.PartyID party_id
@@ -265,64 +182,11 @@ struct ShopParams {
 /**
 * Параметры для создания выплаты
 * shop - параметры магазина
-* payout_tool_id - идентификатор платежного инструмента
 * amount - сумма выплаты
 **/
 struct PayoutParams {
-    1: required PayoutID payout_id
-    2: required ShopParams shop
-    3: required domain.PayoutToolID payout_tool_id
-    4: required domain.Cash amount
-    5: optional Metadata metadata
-}
-
-/**
-* Атрибуты поиска выплат
-**/
-struct PayoutSearchCriteria {
-   1: optional PayoutSearchStatus status
-   /* Диапазон времени создания выплат */
-   2: optional TimeRange time_range
-   3: optional list<PayoutID> payout_ids
-   /* Диапазон суммы выплат */
-   4: optional AmountRange amount_range
-   5: optional domain.CurrencyRef currency
-   6: optional PayoutSearchType type
-}
-
-enum PayoutSearchStatus {
-    unpaid
-    paid
-    cancelled
-    confirmed
-}
-
-enum PayoutSearchType {
-    bank_account
-    wallet
-}
-
-/**
-* Поисковый запрос по выплатам
-* search_criteria - атрибуты поиска выплат
-* from_id (exclusive) - начальный идентификатор, после которого будет формироваться выборка
-* size - размер выборки. Не может быть отрицательным и больше 1000, в случае если не указан,
-* то значение будет равно 1000.
-**/
-struct PayoutSearchRequest {
-   1: required PayoutSearchCriteria search_criteria
-   2: optional i64 from_id
-   3: optional i32 size
-}
-
-/**
-* Поисковый ответ по выплатам
-* payouts - информация по выплатам
-* last_id (inclusive) - уникальный идентификатор, соответствующий последнему элементу выборки
-**/
-struct PayoutSearchResponse {
-   1: required list<Payout> payouts
-   2: required i64 last_id
+    1: required ShopParams shop
+    2: required domain.Cash amount
 }
 
 service PayoutManagement {
@@ -330,19 +194,12 @@ service PayoutManagement {
     /**
      * Создать выплату на определенную сумму и платежный инструмент
      */
-    Payout CreatePayout (1: PayoutParams params) throws (1: InvalidPayoutTool ex1, 2: InsufficientFunds ex2, 3: base.InvalidRequest ex3)
+    Payout CreatePayout (1: PayoutParams params) throws (1: InsufficientFunds ex2, 2: base.InvalidRequest ex3)
 
     /**
     * Получить выплату по идентификатору
     */
     Payout Get (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
-
-    Events GetEvents (1: PayoutID payout_id, 2: EventRange range)
-        throws (
-            1: PayoutNotFound ex1,
-            2: EventNotFound ex2,
-            3: base.InvalidRequest ex3
-        )
 
     /**
      * Подтвердить выплату.
@@ -353,10 +210,4 @@ service PayoutManagement {
      * Отменить движения по выплате.
      */
     void CancelPayout (1: PayoutID payout_id, 2: string details) throws (1: base.InvalidRequest ex1)
-
-    /**
-    * Возвращает список Payout-ов согласно запросу поиска
-    **/
-    PayoutSearchResponse GetPayoutsInfo (1: PayoutSearchRequest request) throws (1: base.InvalidRequest ex1)
-
 }
