@@ -83,7 +83,7 @@ struct Payout {
     12: required domain.Amount fee
     13: required domain.CurrencyRef currency
     6 : required domain.FinalCashFlow payout_flow
-    7 : required PayoutType type
+    7 : required domain.PayoutToolID payout_tool_id
 }
 
 /**
@@ -125,17 +125,6 @@ struct PayoutCancelled {
  * то есть если выплата confirmed, то балансы уже изменены
  */
 struct PayoutConfirmed {}
-
-/* Типы выплаты */
-union PayoutType {
-    2: PayoutAccount bank_account
-    3: Wallet wallet
-    4: NKO nko //TODO
-}
-
-struct NKO { //TODO
-    1: required string id
-}
 
 struct Wallet {
     1: required domain.WalletID wallet_id
