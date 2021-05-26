@@ -126,30 +126,6 @@ struct PayoutCancelled {
  */
 struct PayoutConfirmed {}
 
-struct Wallet {
-    1: required domain.WalletID wallet_id
-}
-
-/* Вывод на расчетный счет */
-union PayoutAccount {
-    1: RussianPayoutAccount       russian_payout_account
-    2: InternationalPayoutAccount international_payout_account
-}
-
-struct RussianPayoutAccount {
-    1: required domain.RussianBankAccount bank_account
-    2: required string inn
-    3: required string purpose
-    4: required domain.LegalAgreement legal_agreement
-}
-
-struct InternationalPayoutAccount {
-   1: required domain.InternationalBankAccount bank_account
-   2: required domain.InternationalLegalEntity legal_entity
-   3: required string purpose
-   4: required domain.LegalAgreement legal_agreement
-}
-
 /**
  * Событие об изменении статуса выплаты
  */
@@ -163,11 +139,6 @@ exception PayoutNotFound {}
 /* Когда на счете для вывода недостаточно средств */
 exception InsufficientFunds {}
 
-struct ShopParams {
-    1: required domain.PartyID party_id
-    2: required domain.ShopID shop_id
-}
-
 /**
 * Параметры для создания выплаты
 * shop - параметры магазина
@@ -176,6 +147,11 @@ struct ShopParams {
 struct PayoutParams {
     1: required ShopParams shop
     2: required domain.Cash amount
+}
+
+struct ShopParams {
+    1: required domain.PartyID party_id
+    2: required domain.ShopID shop_id
 }
 
 service PayoutManagement {
