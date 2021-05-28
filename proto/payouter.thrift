@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 include "msgpack.thrift"
 
-namespace java com.rbkmoney.damsel.payouter
+namespace java com.rbkmoney.payouter
 namespace erlang payouter
 
 typedef base.ID PayoutID
@@ -44,7 +44,7 @@ struct Event {
  */
 union EventSource {
     /* Идентификатор выплаты, которая породила событие */
-    1: PayoutID payout_id
+    1: PayoutID id
 }
 
 /**
@@ -52,15 +52,15 @@ union EventSource {
  */
 union EventPayload {
     /* Набор изменений, порождённых выплатой */
-    1: list<PayoutChange> payout_changes
+    1: list<PayoutChange> changes
 }
 
 /**
  * Один из возможных вариантов события, порождённого выплатой
  */
 union PayoutChange {
-    1: PayoutCreated        payout_created
-    2: PayoutStatusChanged  payout_status_changed
+    1: PayoutCreated        created
+    2: PayoutStatusChanged  status_changed
 }
 
 /**
@@ -72,18 +72,17 @@ struct PayoutCreated {
 }
 
 struct Payout {
-    1 : required PayoutID id
-    2 : required domain.PartyID party_id
-    3 : required domain.ShopID shop_id
-    9 : required domain.ContractID contract_id
-    /* Время формирования платежного поручения, либо выплаты на карту  */
-    4 : required base.Timestamp created_at
-    5 : required PayoutStatus status
-    11: required domain.Amount amount
-    12: required domain.Amount fee
-    13: required domain.CurrencyRef currency
-    6 : required domain.FinalCashFlow payout_flow
-    7 : required domain.PayoutToolID payout_tool_id
+    1: required PayoutID id
+    2: required base.Timestamp created_at
+    3: required domain.PartyID party_id
+    4: required domain.ShopID shop_id
+    5: required domain.ContractID contract_id
+    6: required PayoutStatus status
+    7: required domain.FinalCashFlow cash_flow
+    8: required domain.PayoutToolID payout_tool_id
+    9: required domain.Amount amount
+    10: required domain.Amount fee
+    11: required domain.CurrencyRef currency
 }
 
 /**
@@ -117,7 +116,7 @@ struct PayoutPaid {}
  * балансов на счетах
  */
 struct PayoutCancelled {
-    2: required string details
+    1: required string details
 }
 
 /**
@@ -145,8 +144,8 @@ exception InsufficientFunds {}
 * amount - сумма выплаты
 **/
 struct PayoutParams {
-    1: required ShopParams shop
-    2: required domain.Cash amount
+    1: required ShopParams shop_params
+    2: required domain.Cash cash
 }
 
 struct ShopParams {
@@ -159,12 +158,12 @@ service PayoutManagement {
     /**
      * Создать выплату на определенную сумму и платежный инструмент
      */
-    Payout CreatePayout (1: PayoutParams params) throws (1: InsufficientFunds ex2, 2: base.InvalidRequest ex3)
+    Payout CreatePayout (1: PayoutParams payout_params) throws (1: InsufficientFunds ex2, 2: base.InvalidRequest ex3)
 
     /**
     * Получить выплату по идентификатору
     */
-    Payout Get (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
+    Payout GetPayout (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
 
     /**
      * Подтвердить выплату.
@@ -175,4 +174,5 @@ service PayoutManagement {
      * Отменить движения по выплате.
      */
     void CancelPayout (1: PayoutID payout_id, 2: string details) throws (1: base.InvalidRequest ex1)
+
 }
