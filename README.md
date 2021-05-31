@@ -1,1 +1,1 @@
-# payouter-proto
+# payout-manager-proto

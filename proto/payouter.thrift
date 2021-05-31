@@ -2,8 +2,8 @@ include "base.thrift"
 include "domain.thrift"
 include "msgpack.thrift"
 
-namespace java com.rbkmoney.payouter
-namespace erlang payouter
+namespace java com.rbkmoney.payout.manager
+namespace erlang payout_manager
 
 typedef base.ID PayoutID
 typedef list<Event> Events
