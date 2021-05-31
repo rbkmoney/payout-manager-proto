@@ -10,11 +10,11 @@
         <version>1.0.5</version>
     </parent>
 
-    <artifactId>payouter-proto</artifactId>
+    <artifactId>payout-manager-proto</artifactId>
     <version>SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Payouter</name>
+    <name>payout-manager</name>
     <description>Generates jar artifact containing compiled thrift classes based on generated thrift IDL files</description>
 
     <properties>
@@ -72,8 +72,8 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.rbkmoney.payouter</pattern>
-                                    <shadedPattern>com.rbkmoney.payouter.v${commit.number}</shadedPattern>
+                                    <pattern>com.rbkmoney.payout.manager</pattern>
+                                    <shadedPattern>com.rbkmoney.payout.manager.v${commit.number}</shadedPattern>
                                 </relocation>
                             </relocations>
                             <shadedArtifactAttached>true</shadedArtifactAttached>

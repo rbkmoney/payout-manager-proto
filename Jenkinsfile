@@ -1,7 +1,7 @@
 #!groovy
 // -*- mode: groovy -*-
 
-build('payouter-proto', 'docker-host') {
+build('payout-manager-proto', 'docker-host') {
     checkoutRepo()
     loadBuildUtils()
 
