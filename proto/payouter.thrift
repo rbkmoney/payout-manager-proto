@@ -76,12 +76,12 @@ struct Payout {
     2: required base.Timestamp created_at
     3: required domain.PartyID party_id
     4: required domain.ShopID shop_id
-    6: required PayoutStatus status
-    7: required domain.FinalCashFlow cash_flow
-    8: required domain.PayoutToolID payout_tool_id
-    9: required domain.Amount amount
-    10: required domain.Amount fee
-    11: required domain.CurrencyRef currency
+    5: required PayoutStatus status
+    6: required domain.FinalCashFlow cash_flow
+    7: required domain.PayoutToolID payout_tool_id
+    8: required domain.Amount amount
+    9: required domain.Amount fee
+    10: required domain.CurrencyRef currency
 }
 
 /**
