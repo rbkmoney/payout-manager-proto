@@ -6,70 +6,6 @@ namespace java com.rbkmoney.payout.manager
 namespace erlang payout_manager
 
 typedef base.ID PayoutID
-typedef list<Event> Events
-
-/**
- * Событие, атомарный фрагмент истории бизнес-объекта, например выплаты
- */
-struct Event {
-
-    /**
-     * Идентификатор события.
-     * Монотонно возрастающее целочисленное значение, таким образом на множестве
-     * событий задаётся отношение полного порядка (total order)
-     */
-    1: required base.EventID id
-
-    /**
-     * Время создания события
-     */
-    2: required base.Timestamp created_at
-
-    /**
-     * Идентификатор бизнес-объекта, источника события
-     */
-    3: required EventSource source
-
-    /**
-     * Содержание события, состоящее из списка (возможно пустого)
-     * изменений состояния бизнес-объекта, источника события
-     */
-    4: required EventPayload payload
-
-}
-
-/**
- * Источник события, идентификатор бизнес-объекта, который породил его в
- * процессе выполнения определённого бизнес-процесса
- */
-union EventSource {
-    /* Идентификатор выплаты, которая породила событие */
-    1: PayoutID id
-}
-
-/**
- * Один из возможных вариантов содержания события
- */
-union EventPayload {
-    /* Набор изменений, порождённых выплатой */
-    1: list<PayoutChange> changes
-}
-
-/**
- * Один из возможных вариантов события, порождённого выплатой
- */
-union PayoutChange {
-    1: PayoutCreated        created
-    2: PayoutStatusChanged  status_changed
-}
-
-/**
- * Событие о создании новой выплаты
- */
-struct PayoutCreated {
-    /* Данные созданной выплаты */
-    1: required Payout payout
-}
 
 struct Payout {
     1: required PayoutID id
@@ -124,14 +60,6 @@ struct PayoutCancelled {
  * то есть если выплата confirmed, то балансы уже изменены
  */
 struct PayoutConfirmed {}
-
-/**
- * Событие об изменении статуса выплаты
- */
-struct PayoutStatusChanged {
-    /* Новый статус выплаты */
-    1: required PayoutStatus status
-}
 
 exception PayoutNotFound {}
 
