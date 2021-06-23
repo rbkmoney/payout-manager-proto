@@ -28,7 +28,7 @@ struct Payout {
     1: required PayoutID payout_id
     2: required base.Timestamp created_at
     3: required domain.PartyID party_id
-    4: required domain.ShopID hop_id
+    4: required domain.ShopID shop_id
     5: required PayoutStatus status
     6: required domain.FinalCashFlow cash_flow
     7: required domain.PayoutToolID payout_tool_id
