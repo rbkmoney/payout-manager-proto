@@ -38,7 +38,6 @@ struct Payout {
 }
 
 struct PayoutStatusChanged {
-    /* Новый статус выплаты */
     1: required PayoutStatus status
 }
 
