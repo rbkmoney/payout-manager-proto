@@ -31,10 +31,10 @@ struct Payout {
     4: required domain.ShopID shop_id
     5: required PayoutStatus status
     6: required domain.FinalCashFlow cash_flow
-    7: required domain.PayoutToolID payout_tool_id
-    8: required domain.Amount amount
-    9: required domain.Amount fee
-    10: required domain.CurrencyRef currency
+    7: required domain.Amount amount
+    8: required domain.Amount fee
+    9: required domain.CurrencyRef currency
+    10: optional domain.PayoutToolID payout_tool_id
 }
 
 struct PayoutStatusChanged {
