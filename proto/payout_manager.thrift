@@ -13,7 +13,7 @@ struct Event {
     2: required SequenceID sequence_id
     3: required base.Timestamp created_at
     4: required PayoutChange payout_change
-    5: required Payout payout
+    5: required PayoutData payout_data
 }
 
 union PayoutChange {
@@ -22,10 +22,11 @@ union PayoutChange {
 }
 
 struct PayoutCreated {
-    1: required PayoutUnpaid status
+    1: required PayoutData payout_data
+    2: required PayoutUnpaid status
 }
 
-struct Payout {
+struct PayoutData {
     1: required PayoutID payout_id
     2: required base.Timestamp created_at
     3: required domain.PartyID party_id
@@ -102,8 +103,8 @@ struct ShopParams {
     2: required domain.ShopID shop_id
 }
 
-struct PayoutState {
-    1: required Payout payout
+struct Payout {
+    1: required PayoutData payout_data
     2: required PayoutStatus status
 }
 
@@ -112,13 +113,13 @@ service PayoutManagement {
     /**
      * Создать выплату на определенную сумму и платежный инструмент
      */
-    PayoutState CreatePayout (1: PayoutParams payout_params)
+    Payout CreatePayout (1: PayoutParams payout_params)
         throws (1: InsufficientFunds ex1, 2: base.InvalidRequest ex2)
 
     /**
     * Получить выплату по идентификатору
     */
-    PayoutState GetPayout (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
+    Payout GetPayout (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
 
     /**
      * Подтвердить выплату.
