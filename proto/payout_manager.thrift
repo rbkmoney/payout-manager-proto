@@ -13,7 +13,7 @@ struct Event {
     2: required SequenceID sequence_id
     3: required base.Timestamp created_at
     4: required PayoutChange payout_change
-    5: required PayoutData payout_data
+    5: required Payout payout
 }
 
 union PayoutChange {
@@ -22,20 +22,20 @@ union PayoutChange {
 }
 
 struct PayoutCreated {
-    1: required PayoutData payout_data
-    2: required PayoutUnpaid status
+    1: required Payout payout
 }
 
-struct PayoutData {
+struct Payout {
     1: required PayoutID payout_id
     2: required base.Timestamp created_at
     3: required domain.PartyID party_id
     4: required domain.ShopID shop_id
-    5: required domain.FinalCashFlow cash_flow
-    6: required domain.PayoutToolID payout_tool_id
-    7: required domain.Amount amount
-    8: required domain.Amount fee
-    9: required domain.CurrencyRef currency
+    5: required PayoutStatus payout_status
+    6: required domain.FinalCashFlow cash_flow
+    7: required domain.PayoutToolID payout_tool_id
+    8: required domain.Amount amount
+    9: required domain.Amount fee
+    10: required domain.CurrencyRef currency
 }
 
 struct PayoutStatusChanged {
@@ -101,11 +101,6 @@ struct PayoutParams {
 struct ShopParams {
     1: required domain.PartyID party_id
     2: required domain.ShopID shop_id
-}
-
-struct Payout {
-    1: required PayoutData payout_data
-    2: required PayoutStatus status
 }
 
 service PayoutManagement {
