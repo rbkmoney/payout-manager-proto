@@ -119,7 +119,7 @@ service PayoutManagement {
      */
     Payout CreatePayout (1: PayoutParams payout_params) throws (
         1: InsufficientFunds ex1,
-        2: InvalidRequest ex2,
+        2: base.InvalidRequest ex2,
         3: PayoutAlreadyExists ex3,
         4: NotFound ex4)
 
