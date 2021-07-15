@@ -84,7 +84,7 @@ struct PayoutCancelled {
 struct PayoutConfirmed {}
 
 exception NotFound {
-    1: required string message
+    1: optional string message
 }
 
 /* Когда на счете для вывода недостаточно средств */
