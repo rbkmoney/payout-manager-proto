@@ -82,20 +82,29 @@ struct PayoutCancelled {
  */
 struct PayoutConfirmed {}
 
-
-exception PayoutNotFound {}
+exception NotFound {
+    1: required string message
+}
 
 /* Когда на счете для вывода недостаточно средств */
 exception InsufficientFunds {}
+
+exception PayoutAlreadyExists {}
 
 /**
 * Параметры для создания выплаты
 * shop - параметры магазина
 * amount - сумма выплаты
+* payout_id - уникальный идентификатор выплаты.
+* Если не указан, то сгенерируется новый.
+* payout_tool_id - идентификатор типа выплаты.
+* Если не указан, то будет взят из параметров магазина
 **/
 struct PayoutParams {
     1: required ShopParams shop_params
     2: required domain.Cash cash
+    3: optional PayoutID payout_id
+    4: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ShopParams {
@@ -108,22 +117,25 @@ service PayoutManagement {
     /**
      * Создать выплату на определенную сумму и платежный инструмент
      */
-    Payout CreatePayout (1: PayoutParams payout_params)
-        throws (1: InsufficientFunds ex1, 2: base.InvalidRequest ex2)
+    Payout CreatePayout (1: PayoutParams payout_params) throws (
+        1: InsufficientFunds ex1,
+        2: InvalidRequest ex2,
+        3: PayoutAlreadyExists ex3,
+        4: NotFound ex4)
 
     /**
     * Получить выплату по идентификатору
     */
-    Payout GetPayout (1: PayoutID payout_id) throws (1: PayoutNotFound ex1)
+    Payout GetPayout (1: PayoutID payout_id) throws (1: NotFound ex1)
 
     /**
      * Подтвердить выплату.
      */
-    void ConfirmPayout (1: PayoutID payout_id) throws (1: base.InvalidRequest ex1)
+    void ConfirmPayout (1: PayoutID payout_id) throws (1: NotFound ex1)
 
     /**
      * Отменить движения по выплате.
      */
-    void CancelPayout (1: PayoutID payout_id, 2: string details) throws (1: base.InvalidRequest ex1)
+    void CancelPayout (1: PayoutID payout_id, 2: string details) throws (1: NotFound ex1)
 
 }
