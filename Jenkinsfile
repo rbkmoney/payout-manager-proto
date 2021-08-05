@@ -14,13 +14,13 @@ build('payout-manager-proto', 'docker-host') {
         gitUtils = load("${env.JENKINS_LIB}/gitUtils.groovy")
     }
 
-    pipeDefault() {
-        runStage('compile') {
-            withGithubPrivkey {
-                sh "make wc_compile"
-            }
+    runStage('compile') {
+        withGithubPrivkey {
+            sh "make wc_compile"
         }
+    }
 
+    pipeDefault() {
         env.skipSonar = 'true'
         pipeJavaProto()
     }

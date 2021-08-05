@@ -16,13 +16,26 @@
 
     <name>payout-manager</name>
     <description>Generates jar artifact containing compiled thrift classes based on generated thrift IDL files</description>
+    <url>https://github.com/rbkmoney/payout-manager-proto.git</url>
+
+    <developers>
+        <developer>
+            <organization>RBK.money</organization>
+            <organizationUrl>https://rbk.money</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/rbkmoney/payout-manager-proto.git</connection>
+        <developerConnection>scm:git:ssh://github.com/rbkmoney/payout-manager-proto.git</developerConnection>
+        <url>https://github.com/rbkmoney/payout-manager-proto/tree/master</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!--rbkmoney-->
         <dependency>
             <groupId>com.rbkmoney.woody</groupId>
             <artifactId>woody-thrift</artifactId>
@@ -32,14 +45,23 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.496-cc2875b</version>
+            <version>1.505-1c7cfe6</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/proto</directory>
+                <targetPath>${project.build.outputDirectory}/proto</targetPath>
+                <includes>
+                    <include>*.thrift</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
-            <!-- THRIFT -->
             <plugin>
                 <groupId>org.apache.thrift</groupId>
                 <artifactId>thrift-maven-plugin</artifactId>
@@ -47,7 +69,7 @@
                 <configuration>
                     <generator>java:fullcamel</generator>
                     <thriftSourceRoot>${project.basedir}/proto</thriftSourceRoot>
-                    <thriftExecutable></thriftExecutable>
+                    <thriftExecutable>${path_to_thrift}</thriftExecutable>
                 </configuration>
                 <executions>
                     <execution>
