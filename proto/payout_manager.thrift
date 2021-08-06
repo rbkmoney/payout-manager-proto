@@ -1,6 +1,4 @@
-include "base.thrift"
 include "proto/base.thrift"
-include "domain.thrift"
 include "proto/domain.thrift"
 
 namespace java com.rbkmoney.payout.manager
