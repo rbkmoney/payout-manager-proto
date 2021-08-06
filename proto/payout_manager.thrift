@@ -1,5 +1,5 @@
-include "proto/base.thrift"
-include "proto/domain.thrift"
+include "base.thrift"
+include "domain.thrift"
 
 namespace java com.rbkmoney.payout.manager
 namespace erlang payouts
